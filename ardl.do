@@ -91,3 +91,11 @@ gen hat_lnprice = sum(dlnprice)+`m'
 tsline hat_lnprice lnprice
 twoway  (lfitci hat_lnprice lnprice, stdf) (scatter hat_lnprice lnprice, sort), title(Model v Actual) ytitle(Model lnprice) xtitle(lnprice)
 line exphat_lnprice priceusd date if date>d(1Jan2011) & date<d(30mar2020), yscale(log) ylabel(1 10 100 1000 10000, angle(horizontal) labsize(small) grid glwidth(thin)) ymtick(2 3 4 5 6 7 8 9 20 30 40 50 60 70 80 90 200 300 400 500 600 700 800 900 2000 3000 4000 5000 6000 7000 8000 9000 20000, grid glwidth(vvthin)) title(ARDL model) xlabel(#10, grid angle(45) labsize(small)) xtitle(, size(zero))
+gen residuals = lnprice - hat_lnprice
+centile residuals, c(95 5)
+local n95 = r(ub_1)
+local n5 = r(lb_2)
+gen q95 = exp(lnprice + `n95')
+gen q05 = exp(lnprice + `n5')
+twoway (rarea q05 q95 date) (line priceusd date if date>d(1Jan2011) & date<d(30mar2020)), yscale(log) ylabel(1 10 100 1000 10000, angle(horizontal) labsize(small) grid glwidth(thin)) ymtick(2 3 4 5 6 7 8 9 20 30 40 50 60 70 80 90 200 300 400 500 600 700 800 900 2000 3000 4000 5000 6000 7000 8000 9000 20000, grid glwidth(vvthin)) title(ARDL model) xlabel(#10, grid angle(45) labsize(small)) xtitle(, size(zero))
+
